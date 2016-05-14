@@ -1,0 +1,12 @@
+{
+    "name" : "image-resizer",
+    "description" : "Archangel Design Image Resizer",
+    "version" : "1.0.0",
+    "require" : {
+        "php" : ">=5.5",
+        "ext-gd": "*"
+    },
+    "license" : "BSD-3-Clause",
+    "keywords" : [ "image", "resize" ],
+    "homepage" : "https://github.com/ArchangelDesign/image-resizer"
+}
