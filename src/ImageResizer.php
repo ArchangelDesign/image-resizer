@@ -8,6 +8,7 @@
  */
 
 namespace ArchangelDesign;
+
 use ArchangelDesign\Exception\FileNotFoundException;
 use ArchangelDesign\Exception\InvalidFormatException;
 
@@ -17,6 +18,10 @@ use ArchangelDesign\Exception\InvalidFormatException;
  */
 class ImageResizer
 {
+    const RESIZE_MODE_STRETCH = 1;
+    const RESIZE_MODE_MAINTAIN_WIDTH = 2;
+    const RESIZE_MODE_MAINTAIN_HEIGHT = 2;
+
     /**
      * @var null|resource
      */
@@ -105,5 +110,47 @@ class ImageResizer
             imagecopy($img, $sourceImage, $dest_x, 0, 0, 0, $w, $size);
         }
         imagejpeg($img, $targetPath, 100);
+    }
+
+    /**
+     * @param int $newWidth
+     * @param int $newHeight
+     * @param int $mode
+     * @param string $targetPath
+     */
+    public function simpleResize($newWidth, $newHeight, $mode, $targetPath)
+    {
+        $dim = getimagesize($this->filePath);
+        $w = $dim[0];
+        $h = $dim[1];
+        $aspect = ($h > $w) ? $w/$h : $h/$w;
+
+        switch ($mode) {
+            case self::RESIZE_MODE_MAINTAIN_HEIGHT:
+                $newWidth = $newHeight * $aspect;
+                $src_w = $w;
+                $src_h = $h;
+                $src_x = 0;
+                $src_y = 0;
+                break;
+            case self::RESIZE_MODE_STRETCH:
+            default:
+                $src_w = $w;
+                $src_h = $h;
+                $src_x = 0;
+                $src_y = 0;
+        }
+
+        $newImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        imagecopyresized(
+            $newImage,
+            $this->fileHandle,
+            0, 0, $src_x, $src_y,
+            $newWidth, $newHeight,
+            $src_w, $src_h
+        );
+
+        imagejpeg($newImage, $targetPath);
     }
 }
